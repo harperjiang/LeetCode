@@ -117,7 +117,6 @@ public class Solution {
 
 	public List<Integer> merge(List<Integer> a, List<Integer> b) {
 		List<Integer> result = new ArrayList<Integer>();
-		int counter = 0;
 		while (!(a.isEmpty() && b.isEmpty())) {
 			int next = 0;
 			if (a.isEmpty()) {
