@@ -9,7 +9,7 @@ class Solution {
 		if (total % 2 == 0) {
 			int second = firstXth(n1, n2, total / 2);
 			int first = firstXth(n1, n2, total / 2 - 1);
-			return (first + second) / 2;
+			return (double) (first + second) / 2;
 		} else {
 			return firstXth(n1, n2, total / 2);
 		}
@@ -22,14 +22,36 @@ class Solution {
 		if (n2.length() == 0) {
 			return n1.get(x);
 		}
+		if (n1.length() == 1) {
+			// Insert n1 to n2
+			int idx = binarySearch(n2, n1.first());
+			if (x == idx)
+				return n1.first();
+			else if (x < idx) {
+				return n2.get(x);
+			} else {
+				return n2.get(x - 1);
+			}
+		}
+		if (n2.length() == 1) {
+			// Insert n2 to n1
+			int idx = binarySearch(n1, n2.first());
+			if (x == idx)
+				return n2.first();
+			else if (x < idx) {
+				return n1.get(x);
+			} else {
+				return n1.get(x - 1);
+			}
+		}
 
 		int n1median = n1.get(n1.length() / 2);
 		int t1 = binarySearch(n2, n1median);
 
-		if (n1.length() / 2 + t1 >= x) {
+		if (n1.length() / 2 + t1 > x) {
 			return firstXth(n1.subarray(0, n1.length() / 2), n2.subarray(0, t1), x);
 		} else {
-			return firstXth(n1.subarray(n1.length() / 2 + 1, n1.length()), n2.subarray(t1 + 1, n2.length()),
+			return firstXth(n1.subarray(n1.length() / 2, n1.length()), n2.subarray(t1, n2.length()),
 					x - n1.length() / 2 - t1);
 		}
 	}
@@ -37,21 +59,22 @@ class Solution {
 	// Return a index that the key can be inserted and keep the array sorted
 	protected int binarySearch(Array array, int key) {
 		if (key >= array.last()) {
-			return array.stop;
+			return array.length();
 		}
 		if (key <= array.first()) {
-			return array.start;
+			return 0;
 		}
-		if (array.start == array.stop) {
-			return key >= array.first() ? array.start + 1 : array.start;
+		if (0 == array.length()) {
+			return key >= array.first() ? 1 : 0;
 		}
-		int middle = (array.start + array.stop) / 2;
-		if (key == array.get(middle)) {
+		int middle = (array.length()) / 2;
+		int middleval = array.get(middle);
+		if (key == middleval) {
 			return middle;
-		} else if (key < array.get(middle)) {
-			return binarySearch(array.subarray(array.start, middle), key);
+		} else if (key < middleval) {
+			return binarySearch(array.subarray(0, middle), key);
 		} else {
-			return binarySearch(array.subarray(middle, array.stop), key);
+			return middle + binarySearch(array.subarray(middle, array.length()), key);
 		}
 	}
 
@@ -78,7 +101,7 @@ class Solution {
 		}
 
 		public int last() {
-			return data[stop];
+			return data[stop - 1];
 		}
 
 		public int length() {
