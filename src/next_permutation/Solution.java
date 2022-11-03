@@ -23,7 +23,6 @@ public class Solution {
                 return;
             }
         }
-        Arrays.sort(nums);
     }
 
     public static void main(String[] args) {
