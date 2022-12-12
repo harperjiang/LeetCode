@@ -1,4 +1,4 @@
-package best_time_buy_sell_stock_3;
+package best_time_to_buy_and_sell_stock_3;
 
 import org.junit.Test;
 
