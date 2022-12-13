@@ -5,18 +5,23 @@ import java.util.Arrays;
 public class Solution {
 
     public int maxProfit(int[] prices) {
-        int[] buffer = new int[prices.length];
+        int[] buffer = new int[3];
+        buffer[0] = -prices[0]; // hold
+        buffer[1] = 0;             // sold
+        buffer[2] = 0;          // reset
+
         for (int i = 1; i < prices.length; i++) {
-            buffer[i] = buffer[i - 1];
-            for (int j = i - 1; j >= 0; j--) {
-                if (prices[i] > prices[j]) {
-                    int sum = prices[i] - prices[j];
-                    if (j >= 2)
-                        sum += buffer[j - 2];
-                    buffer[i] = Math.max(buffer[i],sum);
-                }
-            }
+            int hold = Math.max(buffer[0], buffer[2] - prices[i]);
+            int sold = buffer[0] + prices[i];
+            int reset = Math.max(buffer[2], buffer[1]);
+            buffer[0] = hold;
+            buffer[1] = sold;
+            buffer[2] = reset;
         }
-        return buffer[prices.length-1];
+        return Math.max(buffer[1],buffer[2]);
+    }
+
+    public static void main(String[] args) {
+        new Solution().maxProfit(new int[]{1,2,4});
     }
 }
