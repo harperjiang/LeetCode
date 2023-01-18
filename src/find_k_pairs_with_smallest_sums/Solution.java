@@ -1,58 +1,39 @@
 package find_k_pairs_with_smallest_sums;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Solution {
 
+    long convert(int[] value) {
+        return (((long) value[0]) << 32) + value[1];
+    }
+
     public List<List<Integer>> kSmallestPairs(int[] nums1, int[] nums2, int k) {
         List<List<Integer>> result = new ArrayList<>();
-        int p1 = 0, p2 = 0;
-        int pm1 = -1, pm2 = -1;
+        TreeSet<Long> visited = new TreeSet<>();
+        PriorityQueue<int[]> search = new PriorityQueue<>(Comparator.comparing((int[] i) -> i[2]));
+        search.add(new int[]{0, 0, nums1[0] + nums2[0]});
+        visited.add(0L);
         for (int i = 0; i < k; i++) {
-            result.add(List.of(nums1[p1], nums2[p2]));
-            int sum = nums1[p1] + nums2[p2];
-            if (p1 == nums1.length - 1 && p2 == nums2.length - 1) {
-                break;
-            }
-            if (p1 == nums1.length - 1) pm2 = p2;
-            if (p2 == nums2.length - 1) pm1 = p1;
-            // Next step
-            // 1. p1+1, p2 back as possible
-            int c2p1 = p1, c1p2 = p2;
-            int c1sum = Integer.MAX_VALUE;
-            if (p1 + 1 < nums1.length) {
-                c1sum = sum;
-                c1sum += nums1[p1 + 1] - nums1[p1];
-                while (c1sum >= sum && c1p2 > pm2 && c1p2 > 0) {
-                    c1sum -= nums2[c1p2];
-                    c1p2--;
-                    c1sum += nums2[c1p2];
+            if (search.isEmpty()) break;
+            int[] check = search.poll();
+            result.add(List.of(nums1[check[0]], nums2[check[1]]));
+            if (check[0] + 1 < nums1.length && check[0] < k) {
+                int[] next = new int[]{check[0] + 1, check[1], nums1[check[0] + 1] + nums2[check[1]]};
+                long state = convert(next);
+                if (!visited.contains(state)) {
+                    search.add(next);
+                    visited.add(state);
                 }
-                if (c1sum < sum || c1p2 == pm2) c1p2++;
             }
-
-            // 2. p2+1, p1 back as possible
-            int c2sum = Integer.MAX_VALUE;
-            if (p2 + 1 < nums2.length) {
-                c2sum = sum;
-                c2sum += nums2[p2 + 1] - nums2[p2];
-                while (c2sum >= sum && c2p1 > pm1 && c2p1 > 0) {
-                    c2sum -= nums1[c2p1];
-                    c2p1--;
-                    c2sum += nums1[c2p1];
+            if (check[1] + 1 < nums2.length && check[1] < k) {
+                int[] next = new int[]{check[0], check[1] + 1, nums1[check[0]] + nums2[check[1] + 1]};
+                long state = convert(next);
+                if (!visited.contains(state)) {
+                    search.add(next);
+                    visited.add(state);
                 }
-                if (c2sum < sum || c2p1 == pm1) c2p1++;
-            }
-
-            if (c1sum <= c2sum) {
-                p1++;
-                p2 = c1p2;
-            } else {
-                p2++;
-                p1 = c2p1;
             }
         }
         return result;
@@ -61,9 +42,9 @@ public class Solution {
     public static void main(String[] args) {
 //        System.out.println(new Solution().kSmallestPairs(new int[]{1, 7, 11}, new int[]{2, 4, 6}, 3));
 //        System.out.println(new Solution().kSmallestPairs(new int[]{1, 1, 2}, new int[]{1, 2, 3}, 2));
-//        System.out.println(new Solution().kSmallestPairs(new int[]{1, 1, 2}, new int[]{1, 2, 3}, 10));
+        System.out.println(new Solution().kSmallestPairs(new int[]{1, 1, 2}, new int[]{1, 2, 3}, 10));
 //        System.out.println(new Solution().kSmallestPairs(new int[]{1, 2}, new int[]{3}, 3));
 //        System.out.println(new Solution().kSmallestPairs(new int[]{1, 7, 9}, new int[]{1, 5, 11}, 10));
-        System.out.println(new Solution().kSmallestPairs(new int[]{1, 2, 4}, new int[]{-1, 1, 2}, 10));
+//        System.out.println(new Solution().kSmallestPairs(new int[]{1, 2, 4}, new int[]{-1, 1, 2}, 10));
     }
 }
