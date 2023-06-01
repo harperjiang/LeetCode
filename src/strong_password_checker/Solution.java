@@ -7,6 +7,7 @@ public class Solution {
     static int[] NT = {0,1,1,2,1,2,2,3};
     public int strongPasswordChecker(String password) {
         System.out.println(password);
+        System.out.println(password.length());
         Set<Character> distinct = new HashSet<>();
         for(char c: password.toCharArray()) {
             distinct.add(c);
